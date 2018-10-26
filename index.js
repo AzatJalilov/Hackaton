@@ -4,6 +4,9 @@
 const config = require('./resources/config.js');
 const mongojs = require('mongojs');
 var db = mongojs('mongodb://admin:check24@ds159188.mlab.com:59188/lunch-bot', ['restaurants'])
+const bodyParser = require('koa-bodyparser');
+
+const slackService = require('./services/slack-service');
 
 const googleMapsClient = require('@google/maps').createClient({
   key: config.googleApi.key,
@@ -15,7 +18,7 @@ const googleMapsClient = require('@google/maps').createClient({
 const Router = require('koa-router');
 const Koa = require('koa');
 
-const googleApi = require('./src/fetch.js');
+const googleApi = require('./services/fetch.js');
 
 const app = new Koa();
 const router = new Router();
@@ -27,41 +30,29 @@ router.get('/lucky', async (ctx, next) => {
   result.json.results.forEach((eachLoc) => {
     coordinatesArr.push(eachLoc.place_id)
   });
-  for (const coordinates of coordinatesArr){
-    let result =await googleMapsClient.place({
+  for (const coordinates of coordinatesArr) {
+    let result = await googleMapsClient.place({
       placeid: coordinates,
     }).asPromise()
 
     db.restaurants.insert({...result.json.result})
   }
-
   ctx.status = 200;
-  ctx.body = result.json.results;
   next()
 });
 
-
-router.get('/add', async (ctx, next) => {
-  let id = "504efb0625aa227d084aaa1d8bd79e1d2f38764e";
-  const result = await  googleMapsClient.place({
-    placeid: 'ChIJ3cCEYmLfnUcRXCIPN8bEkFU',
-  })
-    .asPromise()
-    .then(function (response) {
-      console.log(response)
-      return response
-    }).catch((e) => {
-      console.log(e)
-    });
-
+const koaApp = new Koa();
+koaApp.use(bodyParser());
+router.get('/', async (ctx, next) => {
   ctx.status = 200;
-  ctx.body = result;
+  ctx.body = slackService.parseSlackRequest(ctx);
   next()
 });
+var port = process.env.PORT || 3111;
 
-
-app.listen(3111);
+app.listen(port);
 
 app
   .use(router.routes())
   .use(router.allowedMethods());
+
