@@ -17,7 +17,7 @@ koaApp.use(async (ctx, next) => {
 
 
   ctx.status = 200
-  ctx.body = "hello";
+  ctx.body = "hello, from github";
   next()
 
 });
