@@ -20,6 +20,11 @@ const googleApi = require('./services/fetch.js');
 const app = new Koa();
 const router = new Router();
 
+app.use(bodyParser());
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
+
 router.get('/lucky', async (ctx, next) => {
   const queryString = (ctx.request.query && ctx.request.query.qs) ? ctx.request.query.qs : "fast food"
   let result = await googleApi(queryString);
@@ -32,28 +37,23 @@ router.get('/lucky', async (ctx, next) => {
       placeid: coordinates,
     }).asPromise()
 
-    db.restaurants.insert({...result.json.result})
+    db.restaurants.insert({ ...result.json.result })
   }
   ctx.status = 200;
   next()
 });
 
-const koaApp = new Koa();
-koaApp.use(bodyParser());
-router.get('/', async (ctx, next) => {
+router.post('/', async (ctx, next) => {
   ctx.status = 200;
   const parsedRequest = slackService.parseSlackRequest(ctx);
   ctx.body = slackService.createImmediateResponse(parsedRequest);
   next();
-  const recommended = await recommendationService.findAPlace();
-  const recommendedPlaceResponse = slackService.formatResponse(recommended, parsedRequest);
-  slackService.sendDelayedResponse(parsedRequest.responseUrl, recommendedPlaceResponse);
+  const recommended = recommendationService.findAPlace()
+    .then(recommendedPlaceResponse => {
+      slackService.formatResponse(recommended, parsedRequest);
+      slackService.sendDelayedResponse(parsedRequest.responseUrl, recommendedPlaceResponse);
+    });
 });
 var port = process.env.PORT || 3111;
 
 app.listen(port);
-
-app
-  .use(router.routes())
-  .use(router.allowedMethods());
-
