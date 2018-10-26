@@ -48,10 +48,10 @@ router.post('/', async (ctx, next) => {
   const parsedRequest = slackService.parseSlackRequest(ctx);
   ctx.body = slackService.createImmediateResponse(parsedRequest);
   next();
-  const recommended = recommendationService.findAPlace()
+  recommendationService.findAPlace()
     .then(recommendedPlaceResponse => {
-      slackService.formatResponse(recommended, parsedRequest);
-      slackService.sendDelayedResponse(parsedRequest.responseUrl, recommendedPlaceResponse);
+      const messageBody = slackService.formatResponse(recommendedPlaceResponse, parsedRequest);
+      slackService.sendDelayedResponse(parsedRequest.responseUrl, messageBody);
     });
 });
 var port = process.env.PORT || 3111;
