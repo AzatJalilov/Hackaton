@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/maps": "^0.5.5",
     "koa": "^2.6.1",
+    "koa-bodyparser": "^4.2.1",
     "mongoose": "^5.3.6",
     "query-string": "^6.2.0"
   }

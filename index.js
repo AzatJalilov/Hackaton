@@ -12,9 +12,10 @@ const mongoose = require('mongoose');
 
 
 const Koa = require('koa');
+const bodyParser = require('koa-bodyparser');
 const koaApp = new Koa();
+koaApp.use(bodyParser());
 koaApp.use(async (ctx, next) => {
-
   ctx.status = 200
   ctx.body = slackService.parseSlackRequest(ctx);
   next()

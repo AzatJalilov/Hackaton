@@ -1,13 +1,10 @@
-const querystring = require('query-string');
 
 function parseSlackRequest(ctx) {
-    const request = ctx.request.url;
-    const requstParams = querystring.parse(request);
+    const requstParams = ctx.request.body;
     const command = requstParams.command;
     const responseUrl = requstParams.responseUrl;
     const userId = requstParams.user_id;
     const text = requstParams.text;
-    console.log(JSON.stringify(ctx));
     if (!text) {
         return 'No text argument';
     }
