@@ -15,10 +15,9 @@ koaApp.use(bodyParser());
 koaApp.use(async (ctx, next) => {
   ctx.status = 200;
   const parsedRequest = slackService.parseSlackRequest(ctx);
-
   ctx.body = slackService.createImmediateResponse(parsedRequest);
   next();
-  const recommended = await recommendationService.findAPlace();
+  const recommended = recommendationService.findAPlace();
   const recommendedPlaceResponse = slackService.formatResponse( recommended, parsedRequest);
   slackService.sendDelayedResponse(parsedRequest.responseUrl,recommendedPlaceResponse);
 });
