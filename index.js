@@ -7,14 +7,11 @@ var db = mongojs('mongodb://admin:check24@ds159188.mlab.com:59188/lunch-bot', ['
 const bodyParser = require('koa-bodyparser');
 
 const slackService = require('./services/slack-service');
-
+const recommendationService = require('./services/recommendation-service');
 const googleMapsClient = require('@google/maps').createClient({
   key: config.googleApi.key,
   Promise: Promise
 });
-
-
-//
 const Router = require('koa-router');
 const Koa = require('koa');
 
@@ -45,8 +42,12 @@ const koaApp = new Koa();
 koaApp.use(bodyParser());
 router.get('/', async (ctx, next) => {
   ctx.status = 200;
-  ctx.body = slackService.parseSlackRequest(ctx);
-  next()
+  const parsedRequest = slackService.parseSlackRequest(ctx);
+  ctx.body = slackService.createImmediateResponse(parsedRequest);
+  next();
+  const recommended = await recommendationService.findAPlace();
+  const recommendedPlaceResponse = slackService.formatResponse(recommended, parsedRequest);
+  slackService.sendDelayedResponse(parsedRequest.responseUrl, recommendedPlaceResponse);
 });
 var port = process.env.PORT || 3111;
 

@@ -1,0 +1,9 @@
+{
+    "mongo": "mongodb://admin:check24@ds159188.mlab.com:59188/lunch-bot",
+    "googleClientKey": "AIzaSyBO7-7iiJAhph0kVbJ9wp4N95t1PBRVVUU",
+    "foursquare": {
+        "key":"ZUTFNYAJ5RF4VNFYALE5VUR4GYEFH05USFCE0FWK2OWD1HTP",
+        "secret": "5JO5ACYHDUZQUU1OJMO1AJQD4ZSHXJABUOMXFMHJNGXJG3BN"
+    }
+    
+}
