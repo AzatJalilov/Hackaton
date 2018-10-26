@@ -1,6 +1,7 @@
 
 function parseSlackRequest(ctx) {
     const requstParams = ctx.request.body;
+    console.log(requstParams);
     const command = requstParams.command;
     const responseUrl = requstParams.responseUrl;
     const userId = requstParams.user_id;
