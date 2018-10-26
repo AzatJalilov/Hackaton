@@ -1,6 +1,7 @@
 const rp = require('request-promise');
 function parseSlackRequest(ctx) {
     const requstParams = ctx.request.body;
+    console.log(requstParams);
     const command = requstParams.command;
     const responseUrl = requstParams.response_url;
     const userId = requstParams.user_id;
