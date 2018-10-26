@@ -1,8 +1,11 @@
 
 async function findAPlace() {
-    return setTimeout(function () {
-        return 'I am a recommendation';
-    }, 2000);
+    await timeout(2000);
+    return 'I am a recommendation';
+}
+
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 module.exports = { findAPlace }
