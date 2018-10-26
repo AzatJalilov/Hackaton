@@ -1,8 +1,8 @@
-
+const rp = require('request-promise');
 function parseSlackRequest(ctx) {
     const requstParams = ctx.request.body;
     const command = requstParams.command;
-    const responseUrl = requstParams.responseUrl;
+    const responseUrl = requstParams.response_url;
     const userId = requstParams.user_id;
     const text = requstParams.text;
     if (!text) {
@@ -19,9 +19,25 @@ function parseSlackRequest(ctx) {
     });
     return { command, payload, responseUrl, userId };
 }
-
-function formatResponse(message) {
-
+function sendDelayedResponse(responseUrl, responseBody) {
+    rp(responseUrl,{
+        method: 'POST',
+      body: responseBody,
+      headers: { 'Content-type': 'application/json'},
+      json: true,
+    });
+  }
+function createImmediateResponse(parsedRequest) {
+    return {
+        "response_type": 'emphereal',
+        text: `Hello <@${parsedRequest.userId}>. We are working on finding a place for you!!`
+      };
+}
+function formatResponse(message, parsedRequest) {
+    return {
+        "response_type": 'in_channel',
+        text: `<@${parsedRequest.userId}>, we recommend you go to ${JSON.stringify(message)}!`
+    }
 }
 
-module.exports = { parseSlackRequest, formatResponse }
+module.exports = { parseSlackRequest, formatResponse, createImmediateResponse ,sendDelayedResponse}
