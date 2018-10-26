@@ -11,6 +11,8 @@
   "dependencies": {
     "@google/maps": "^0.5.5",
     "koa": "^2.6.1",
+    "koa-router": "^7.4.0",
+    "mongojs": "^2.6.0",
     "mongoose": "^5.3.6"
   }
 }
