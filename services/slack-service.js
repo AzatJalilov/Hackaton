@@ -21,24 +21,43 @@ function parseSlackRequest(ctx) {
     return { command, payload, responseUrl, userId };
 }
 function sendDelayedResponse(responseUrl, responseBody) {
-    rp(responseUrl,{
+    rp(responseUrl, {
         method: 'POST',
-      body: responseBody,
-      headers: { 'Content-type': 'application/json'},
-      json: true,
+        body: responseBody,
+        headers: { 'Content-type': 'application/json' },
+        json: true,
     });
-  }
+}
 function createImmediateResponse(parsedRequest) {
     return {
         "response_type": 'emphereal',
         text: `Hello <@${parsedRequest.userId}>. We are working on finding a place for you!!`
-      };
-}
-function formatResponse(message, parsedRequest) {
-    return {
-        "response_type": 'in_channel',
-        text: `<@${parsedRequest.userId}>, we recommend you go to ${JSON.stringify(message)}!`
-    }
+    };
 }
 
-module.exports = { parseSlackRequest, formatResponse, createImmediateResponse ,sendDelayedResponse}
+function formatResponse(restaurant, parsedRequest) {
+    return {
+        response_type: 'in_channel',
+        text: `<@${parsedRequest.userId}>, we recommend you go to ${restaurant.name}!`,
+        attachments: [
+            {
+                "author_name": restaurant.name,
+                "author_link": restaurant.url,
+                "fields": [
+                    {
+                        "title": "Rating",
+                        "value": restaurant.rating,
+                        "short": false
+                    },
+                    {
+                        "title": "Website",
+                        "value": restaurant.website,
+                        "short": false
+                    }
+                ],
+            }
+        ]
+    };
+}
+
+module.exports = { parseSlackRequest, formatResponse, createImmediateResponse, sendDelayedResponse }

@@ -1,11 +1,7 @@
-
-async function findAPlace() {
-    await timeout(2000);
-    return 'I am a recommendation';
-}
-
-function timeout(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+const { getRestaurants } = require('../stores/restaurants-store');
+async function findAPlace(params) {
+    let result = await getRestaurants(params);
+    return result[0];
 }
 
 module.exports = { findAPlace }

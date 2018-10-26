@@ -2,10 +2,8 @@
  * Created by doga on 22/10/2016.
  */
 const config = require('./resources/config.js');
-const mongojs = require('mongojs');
-var db = mongojs('mongodb://admin:check24@ds159188.mlab.com:59188/lunch-bot', ['restaurants'])
 const bodyParser = require('koa-bodyparser');
-
+const restaurantsStore = require('./stores/restaurants-store');
 const slackService = require('./services/slack-service');
 const recommendationService = require('./services/recommendation-service');
 const googleMapsClient = require('@google/maps').createClient({
@@ -36,8 +34,7 @@ router.get('/lucky', async (ctx, next) => {
     let result = await googleMapsClient.place({
       placeid: coordinates,
     }).asPromise()
-
-    db.restaurants.insert({ ...result.json.result })
+    restaurantsStore.insertRestaurants(result.json.result);
   }
   ctx.status = 200;
   next()
