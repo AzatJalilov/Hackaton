@@ -7,7 +7,12 @@ function mapRestaurant(response){
         priceLevel: response.price_level,
         rating: response.rating,
         types: response.types,
-        location: response.geometry.location
+        location: response.geometry.location,
+        phoneNumber: response.formatted_phone_number,
+        openningHours: { periods: response.opening_hours.periods, weekdayText: response.opening_hours.weekday_text },
+        photos: response.photos, 
+        url: response.url,
+        reviews: response.reviews
     }
 }
 
