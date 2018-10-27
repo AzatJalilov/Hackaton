@@ -38,11 +38,12 @@ function createImmediateResponse(parsedRequest) {
 function formatResponse(restaurant, parsedRequest) {
     return {
         response_type: 'in_channel',
-        text: `<@${parsedRequest.userId}>, we recommend you go to ${restaurant.name}!`,
+        text: `<@${parsedRequest.userId}>, we recommend you go to ${restaurant.name}. ${restaurant.formattedAddress}!`,
         attachments: [
             {
                 "author_name": restaurant.name,
                 "author_link": restaurant.url,
+                "image_url": restaurant.icon,
                 "fields": [
                     {
                         "title": "Rating",

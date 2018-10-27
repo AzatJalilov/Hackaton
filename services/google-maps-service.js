@@ -14,7 +14,7 @@ async function getPlacesList(query) {
       maxprice:4,
       type: 'restaurant'
     }).asPromise();
-    console.log(places);
+    
     return places.json.results;
 }
 
