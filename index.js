@@ -6,7 +6,7 @@ const slackService = require('./services/slack-service');
 const recommendationService = require('./services/recommendation-service');
 const Router = require('koa-router');
 const Koa = require('koa');
-const { getPlacesList } = require('./services/google-maps-service.js');
+const { getPlacesList, getPlaceDetail } = require('./services/google-maps-service.js');
 
 const app = new Koa();
 const router = new Router();
@@ -17,8 +17,25 @@ app
   .use(router.allowedMethods());
 
 router.get('/lucky', async (ctx, next) => {
-  const queryString = (ctx.request.query && ctx.request.query.qs) ? ctx.request.query.qs : "fast food"
-  getPlacesList(queryString);
+  const queryString = (ctx.request.query && ctx.request.query.qs) ? ctx.request.query.qs : "fast food";
+  restaurantsStore.getToken().then(async (nextToken) => {
+    let { restaurants, token } = await getPlacesList(queryString, nextToken);
+    restaurants.forEach(restaurant => restaurantsStore.insertRestaurants(mapRestaurant(restaurant)));
+    restaurantsStore.saveToken(token);
+  });
+  ctx.status = 200;
+  next();
+});
+
+router.get('/fillmeup', async (ctx, next) => {
+  restaurantsStore.getRestaurants()
+    .then((restaurants) => 
+      restaurants.forEach(async (currentRestaurant) => {
+        console.log(currentRestaurant);
+        const restaurantDetail = await getPlaceDetail(currentRestaurant.placeId);
+        return restaurantsStore.updateRestaurantDetails(restaurantDetail);
+      })
+  );
   ctx.status = 200;
   next()
 });

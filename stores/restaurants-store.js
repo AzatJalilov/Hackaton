@@ -1,5 +1,5 @@
 const mongojs = require('mongojs');
-const db = mongojs('mongodb://admin:check24@ds159188.mlab.com:59188/lunch-bot', ['restaurants'])
+const db = mongojs('mongodb://admin:check24@ds159188.mlab.com:59188/lunch-bot', ['restaurants', 'tokens'])
 
 async function insertRestaurants(restaurants) {
     return new Promise((resolve) => {
@@ -9,12 +9,35 @@ async function insertRestaurants(restaurants) {
     });
 }
 
-async function getRestaurants() {
+async function updateRestaurantDetails(restaurant) {
     return new Promise((resolve) => {
-        db.restaurants.find(function (err, doc) {
-            resolve(doc)
+        db.restaurants.update({ placeId: restaurant.placeId }, restaurant, function (err, doc) {
+            resolve(doc);
         });
     });
 }
 
-module.exports = { insertRestaurants, getRestaurants }
+async function saveToken(token) {
+    return new Promise((resolve) => {
+        db.tokens.insert({ token }, function (err, doc) {
+            resolve(doc);
+        });
+    });
+}
+
+async function getToken() {
+    return new Promise((resolve) => {
+        db.tokens.find().sort({"_id": -1}, function (err, doc) {
+            resolve(doc);
+        });
+    });
+}
+async function getRestaurants() {
+    return new Promise((resolve) => {
+        db.restaurants.find(function (err, docs) {
+            resolve(docs)
+        });
+    });
+}
+
+module.exports = { insertRestaurants, getRestaurants, updateRestaurantDetails,saveToken,getToken }
