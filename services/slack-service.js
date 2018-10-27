@@ -63,7 +63,8 @@ function formatResponse(restaurant, parsedRequest) {
                         "short": false
                     }
                 ],
-            }
+            },
+            ...restaurant.reviews
         ]
     };
 }
