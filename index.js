@@ -7,6 +7,8 @@ const recommendationService = require('./services/recommendation-service');
 const Router = require('koa-router');
 const Koa = require('koa');
 const { getPlacesList, getPlaceDetail } = require('./services/google-maps-service.js');
+const restaurantsStore = require('./stores/restaurants-store');
+const mapRestaurant = require('./services/restaurant-mapper');
 
 const app = new Koa();
 const router = new Router();

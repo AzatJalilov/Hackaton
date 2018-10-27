@@ -18,6 +18,7 @@ async function getPlacesList(query, nextPageToken) {
     options.pagetoken = nextPageToken.token;
   }
   const places = await googleMapsClient.places(options).asPromise();
+  console.log(places);
   return { restaurants : places.json.results, token: places.json.next_page_token };
 }
 async function getPlaceDetail(placeId) {
