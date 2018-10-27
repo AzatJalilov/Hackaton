@@ -14,7 +14,15 @@ async function findAPlace(params) {
         };
     }
     let result = await getRestaurants(query) || [];
-    return result[Math.random(result.length)];
+    
+    if (result.length === 0){
+        return null;
+    }
+    return result[getRandomInt(result.length - 1)];
 }
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
 
 module.exports = { findAPlace }
