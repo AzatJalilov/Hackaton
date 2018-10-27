@@ -6,7 +6,7 @@ function parseSlackRequest(ctx) {
     const userId = requstParams.user_id;
     const text = requstParams.text;
     if (!text) {
-        return 'No text argument';
+        return { command, payload: {}, responseUrl, userId };
     }
     const variables = text.split(' ');
     let payload = {};
