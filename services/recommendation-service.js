@@ -1,13 +1,13 @@
 const { getRestaurants } = require('../stores/restaurants-store');
 async function findAPlace(params) {
     let query = {};
-    if (params.price) {
+    if (params && params.price) {
         const intPrice = parseInt(params.price);
         if(intPrice !== NaN){
             query.priceLevel = { $lte: intPrice }
         };
     }
-    if (params.rating) {
+    if (params && params.rating) {
         const intRating = parseInt(params.rating);
         if(intRating !== NaN){
             query.rating = { $gte: intRating}
@@ -23,7 +23,7 @@ async function findAPlace(params) {
     query[`openningHours.periods.${dayOfWeek}.open.day`] ={ $lte: dayOfWeek }
     query[`openningHours.periods.${dayOfWeek}.open.time`] = { $lte: `${time}` };
     let result = await getRestaurants(query) || [];
-    
+
     if (result.length === 0){
         return null;
     }
