@@ -14,7 +14,7 @@ async function findAPlace(params) {
         };
     }
     let result = await getRestaurants(query) || [];
-    return result[0];
+    return result[Math.random(result.length)];
 }
 
 module.exports = { findAPlace }
