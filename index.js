@@ -67,6 +67,17 @@ router.post('/', async (ctx, next) => {
       slackService.sendDelayedResponse(parsedRequest.responseUrl, messageBody);
     });
 });
+
+router.get('/test', async (ctx, next) => {
+  recommendationService.findAPlace({})
+    .then(recommendedPlaceResponse => {
+        console.log(recommendedPlaceResponse);
+        const messageBody = slackService.formatResponse(recommendedPlaceResponse, {});
+        ctx.body= messageBody;
+        ctx.status = 200;
+        next();
+    });
+});
 var port = process.env.PORT || 3111;
 
 app.listen(port);

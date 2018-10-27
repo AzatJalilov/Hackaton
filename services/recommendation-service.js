@@ -13,6 +13,15 @@ async function findAPlace(params) {
             query.rating = { $gte: intRating}
         };
     }
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const hours = now.getHours() * 100;
+    const minutes = now.getMinutes();
+    const time = hours + minutes;
+    query[`openningHours.periods.${dayOfWeek}.close.day`] ={ $gte: dayOfWeek };
+    query[`openningHours.periods.${dayOfWeek}.close.time`] ={ $gte: `${time}` };
+    query[`openningHours.periods.${dayOfWeek}.open.day`] ={ $lte: dayOfWeek }
+    query[`openningHours.periods.${dayOfWeek}.open.time`] = { $lte: `${time}` };
     let result = await getRestaurants(query) || [];
     
     if (result.length === 0){

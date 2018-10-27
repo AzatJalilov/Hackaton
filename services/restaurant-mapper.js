@@ -9,11 +9,24 @@ function mapRestaurant(response){
         types: response.types,
         location: response.geometry.location,
         phoneNumber: response.formatted_phone_number,
-        openningHours: { periods: response.opening_hours.periods, weekdayText: response.opening_hours.weekday_text },
+        openningHours: { periods: mapOpenningHours(response.opening_hours.periods), weekdayText: response.opening_hours.weekday_text },
         photos: response.photos, 
         url: response.url,
         reviews: response.reviews
     }
+}
+function mapOpenningHours(periods) {
+    if(periods && Array.isArray(periods)) {
+        return periods.map((period) => {
+            return {
+                close: {
+                    day: period.close.day,
+                    time: Number(period.close.time)
+                }
+            };
+        })
+    }
+    return periods;
 }
 
 module.exports = mapRestaurant;
