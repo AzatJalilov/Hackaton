@@ -2,7 +2,11 @@ const mongojs = require('mongojs');
 const db = mongojs('mongodb://admin:check24@ds159188.mlab.com:59188/lunch-bot', ['restaurants'])
 
 async function insertRestaurants(restaurants) {
-    db.restaurants.insert({ ...restaurants })
+    return new Promise((resolve) => {
+        db.restaurants.insert({ ...restaurants }, function (err, doc) {
+            resolve(doc)
+        });
+    });
 }
 
 async function getRestaurants() {

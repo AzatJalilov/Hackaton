@@ -1,19 +1,13 @@
 /**
  * Created by doga on 22/10/2016.
  */
-const config = require('./resources/config.js');
 const bodyParser = require('koa-bodyparser');
 const restaurantsStore = require('./stores/restaurants-store');
 const slackService = require('./services/slack-service');
 const recommendationService = require('./services/recommendation-service');
-const googleMapsClient = require('@google/maps').createClient({
-  key: config.googleApi.key,
-  Promise: Promise
-});
 const Router = require('koa-router');
 const Koa = require('koa');
-
-const googleApi = require('./services/fetch.js');
+const { getPlacesList } = require('./services/google-maps-service.js');
 
 const app = new Koa();
 const router = new Router();
@@ -25,17 +19,8 @@ app
 
 router.get('/lucky', async (ctx, next) => {
   const queryString = (ctx.request.query && ctx.request.query.qs) ? ctx.request.query.qs : "fast food"
-  let result = await googleApi(queryString);
-  let coordinatesArr = [];
-  result.json.results.forEach((eachLoc) => {
-    coordinatesArr.push(eachLoc.place_id)
-  });
-  for (const coordinates of coordinatesArr) {
-    let result = await googleMapsClient.place({
-      placeid: coordinates,
-    }).asPromise()
-    restaurantsStore.insertRestaurants(result.json.result);
-  }
+  let restaurants = await getPlacesList(queryString);
+  restaurants.forEach(restaurant => restaurantsStore.insertRestaurants(restaurant));
   ctx.status = 200;
   next()
 });
