@@ -30,12 +30,26 @@ router.get('/lucky', async (ctx, next) => {
 });
 
 router.get('/fillmeup', async (ctx, next) => {
+  let isRunning;
   restaurantsStore.getRestaurants()
     .then((restaurants) => 
       restaurants.forEach(async (currentRestaurant) => {
-        console.log(currentRestaurant);
-        const restaurantDetail = await getPlaceDetail(currentRestaurant.placeId);
-        return restaurantsStore.updateRestaurantDetails(restaurantDetail);
+        if (!currentRestaurant.url && !isRunning) {
+          let success;
+          isRunning = true;
+          while (!success){
+            try{
+              console.log(`Trying to get details for ${currentRestaurant.placeId}`);
+              const restaurantDetail = await getPlaceDetail(currentRestaurant.placeId);
+              console.log(`Recieved details ${restaurantDetail}`);
+              restaurantsStore.updateRestaurantDetails(mapRestaurant(restaurantDetail));
+              success = true;
+            }
+            catch (ex) {
+              console.log('Unsuccessfull');
+            }
+          }
+        }
       })
   );
   ctx.status = 200;
@@ -47,7 +61,7 @@ router.post('/', async (ctx, next) => {
   const parsedRequest = slackService.parseSlackRequest(ctx);
   ctx.body = slackService.createImmediateResponse(parsedRequest);
   next();
-  recommendationService.findAPlace()
+  recommendationService.findAPlace(parsedRequest.payload)
     .then(recommendedPlaceResponse => {
       const messageBody = slackService.formatResponse(recommendedPlaceResponse, parsedRequest);
       slackService.sendDelayedResponse(parsedRequest.responseUrl, messageBody);

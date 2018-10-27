@@ -32,9 +32,9 @@ async function getToken() {
         });
     });
 }
-async function getRestaurants() {
+async function getRestaurants(params) {
     return new Promise((resolve) => {
-        db.restaurants.find(function (err, docs) {
+        db.restaurants.find(params, function (err, docs) {
             resolve(docs)
         });
     });

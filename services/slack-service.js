@@ -1,7 +1,6 @@
 const rp = require('request-promise');
 function parseSlackRequest(ctx) {
     const requstParams = ctx.request.body;
-    console.log(requstParams);
     const command = requstParams.command;
     const responseUrl = requstParams.response_url;
     const userId = requstParams.user_id;
@@ -36,6 +35,14 @@ function createImmediateResponse(parsedRequest) {
 }
 
 function formatResponse(restaurant, parsedRequest) {
+    if (!restaurant) {
+        console.log('not found');
+        return {
+            "response_type": 'emphereal',
+            text: `<@${parsedRequest.userId}>. Cannot find any restaurant matching search cretirea`
+        };
+    }
+
     return {
         response_type: 'in_channel',
         text: `<@${parsedRequest.userId}>, we recommend you go to ${restaurant.name}. ${restaurant.formattedAddress}!`,
